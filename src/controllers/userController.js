@@ -3,20 +3,29 @@ const User = require('../models/User');
 
 const getUser = async (req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.user.id).select('-password'); // Não retornar a senha
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
-        res.json(user);
+        return res.status(200).json(user);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao obter usuário' });
+        console.error('Erro ao obter o perfil do usuário:', error);
+        return res.status(500).json({ error: 'Erro ao obter o perfil do usuário' });
     }
 };
 
 
 const updateUser = async (req, res) => {
     try {
-        const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        const { username, email, escola } = req.body;
+        const profilePicture = req.file ? req.file.filename : null;
+
+        const updatedData = { username, email, escola };
+        if (profilePicture) {
+            updatedData.profilePicture = profilePicture;
+        }
+
+        const user = await User.findByIdAndUpdate(req.params.id, updatedData, { new: true });
         if (!user) {
             return res.status(404).json({ message: 'Usuário não encontrado' });
         }
@@ -25,5 +34,6 @@ const updateUser = async (req, res) => {
         res.status(500).json({ error: 'Erro ao atualizar usuário' });
     }
 };
+
 
 module.exports = { getUser, updateUser };

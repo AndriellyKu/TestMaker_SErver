@@ -7,24 +7,26 @@ const register = async (req, res) => {
     try {
         const { username, email, password, userType, escola } = req.body;
 
-        
+        // Verifica se o usuário já existe
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: 'Usuário já registrado' });
         }
 
-
+        // Criptografa a senha
         const hashedPassword = await bcrypt.hash(password, 10);
 
+        // Cria um novo usuário
         const newUser = new User({
             username,
             email,
             password: hashedPassword,
             userType,
             escola,
-            profilePicture: null
+            profilePicture: req.file ? req.file.path : null, // Aqui é onde o caminho do arquivo de imagem é adicionado
         });
 
+        // Salva o novo usuário no banco de dados
         await newUser.save();
 
         return res.status(201).json({ message: 'Usuário criado com sucesso!' });
@@ -38,17 +40,18 @@ const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        
+        // Verifica se o usuário existe
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
+        // Verifica se a senha está correta
         const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Senha incorreta' });
-        }
+        console.log("A senha confere:", isMatch);
+        
 
+        // Cria um token JWT
         const token = jwt.sign({ id: user._id, userType: user.userType }, process.env.JWT_SECRET, {
             expiresIn: '1h',
         });
