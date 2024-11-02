@@ -3,64 +3,66 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User.js'); 
 require('dotenv').config();
 
+
 const register = async (req, res) => {
     try {
-        const { username, email, password, userType, escola } = req.body;
+        const { username, email, password, userType, escola, profilePicture } = req.body;
 
-        // Verifica se o usuário já existe
-        const existingUser = await User.findOne({ email });
-        if (existingUser) {
-            return res.status(400).json({ message: 'Usuário já registrado' });
+        
+        if (!username || !email || !password || !userType || !escola) {
+            return res.status(400).json({ message: "Todos os campos são obrigatórios" });
         }
 
-        // Criptografa a senha
-        const hashedPassword = await bcrypt.hash(password, 10);
+        
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({ message: "Email já registrado" });
+        }
 
-        // Cria um novo usuário
         const newUser = new User({
             username,
             email,
-            password: hashedPassword,
+            password, 
             userType,
             escola,
-            profilePicture: req.file ? req.file.path : null, // Aqui é onde o caminho do arquivo de imagem é adicionado
+            profilePicture
         });
 
-        // Salva o novo usuário no banco de dados
         await newUser.save();
-
-        return res.status(201).json({ message: 'Usuário criado com sucesso!' });
+        res.status(201).json({ message: "Usuário registrado com sucesso" });
     } catch (error) {
-        console.error('Erro ao registrar o usuário:', error);
-        return res.status(500).json({ error: 'Erro ao registrar o usuário' });
+        console.error("Erro ao registrar o usuário:", error);
+        res.status(500).json({ message: "Erro ao registrar o usuário" });
     }
 };
 
-const login = async (req, res) => {
-    try {
-        const { email, password } = req.body;
 
-        // Verifica se o usuário existe
+
+const login = async (req, res) => {
+    const { email, password } = req.body;
+
+    try {
+        
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
-        // Verifica se a senha está correta
-        const isMatch = await bcrypt.compare(password, user.password);
-        console.log("A senha confere:", isMatch);
         
+        const validPassword = await bcrypt.compare(password, user.password);
+        if (!validPassword) {
+            return res.status(400).json({ message: 'Senha incorreta' });
+        }
 
-        // Cria um token JWT
-        const token = jwt.sign({ id: user._id, userType: user.userType }, process.env.JWT_SECRET, {
-            expiresIn: '1h',
-        });
+        
+        const token = jwt.sign({ id: user._id, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        return res.status(200).json({ message: 'Login realizado com sucesso!', token });
+        
+        return res.json({ token, userType: user.userType });
     } catch (error) {
-        console.error('Erro ao realizar login:', error);
-        return res.status(500).json({ error: 'Erro ao realizar login' });
+        return res.status(500).json({ message: 'Erro ao realizar login', error });
     }
 };
+
 
 module.exports = { register, login };

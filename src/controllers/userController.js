@@ -1,39 +1,58 @@
 const User = require('../models/User');
 
-
 const getUser = async (req, res) => {
-    try {
-        const user = await User.findById(req.user.id).select('-password'); // Não retornar a senha
-        if (!user) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
-        }
-        return res.status(200).json(user);
-    } catch (error) {
-        console.error('Erro ao obter o perfil do usuário:', error);
-        return res.status(500).json({ error: 'Erro ao obter o perfil do usuário' });
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    
+    if (!user) {
+      return res.status(404).json({ message: 'Usuário não encontrado' });
     }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar usuário', error });
+  }
 };
 
+
+const getProfessorData = async (req, res) => {
+  try {
+    const professorId = req.user.id; 
+    const professor = await User.findById(professorId);
+    
+    if (!professor) {
+      return res.status(404).json({ message: 'Professor não encontrado' });
+    }
+
+    
+    res.json({ name: professor.username, profilePic: professor.profilePicture });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar dados do professor', error });
+  }
+};
 
 const updateUser = async (req, res) => {
+    const { id } = req.params;
+    const { profilePicture, email, username, userType, escola } = req.body; 
+
     try {
-        const { username, email, escola } = req.body;
-        const profilePicture = req.file ? req.file.filename : null;
+        const updatedUser = await User.findByIdAndUpdate(id, {
+            profilePicture,
+            email,
+            username,
+            userType,
+            escola
+        }, { new: true }); 
 
-        const updatedData = { username, email, escola };
-        if (profilePicture) {
-            updatedData.profilePicture = profilePicture;
+        if (!updatedUser) {
+            return res.status(404).send({ message: 'Usuário não encontrado' });
         }
-
-        const user = await User.findByIdAndUpdate(req.params.id, updatedData, { new: true });
-        if (!user) {
-            return res.status(404).json({ message: 'Usuário não encontrado' });
-        }
-        res.json(user);
+        res.status(200).send(updatedUser);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao atualizar usuário' });
+        res.status(500).send({ message: 'Erro ao atualizar usuário', error });
     }
 };
 
 
-module.exports = { getUser, updateUser };
+module.exports = { getUser, updateUser, getProfessorData };

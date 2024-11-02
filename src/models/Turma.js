@@ -10,20 +10,20 @@ const turmaSchema = new mongoose.Schema({
         required: true,
     },
     professor: {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
         required: true,
     },
+    alunos: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }],
     background: {
         type: String,
-        default: 'default_bg.jpg',
-    },
-    dataCriacao: {
-        type: Date,
-        default: Date.now,
+        default: null,
     },
 }, {
-    timestamps: true, 
+    timestamps: true,
 });
 
 const Turma = mongoose.model('Turma', turmaSchema);
