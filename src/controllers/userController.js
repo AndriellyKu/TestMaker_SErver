@@ -19,39 +19,32 @@ const getUser = async (req, res) => {
 const getProfessorData = async (req, res) => {
   try {
     const professorId = req.user.id; 
-    const professor = await User.findById(professorId);
-    
+    console.log("Professor ID:", professorId); 
+
+    const professor = await User.findById(professorId, 'username profilePicture');
     if (!professor) {
+      console.log("Professor não encontrado");
       return res.status(404).json({ message: 'Professor não encontrado' });
     }
 
-    
     res.json({ name: professor.username, profilePic: professor.profilePicture });
   } catch (error) {
+    console.error("Erro ao buscar dados do professor:", error);
     res.status(500).json({ message: 'Erro ao buscar dados do professor', error });
   }
 };
 
 const updateUser = async (req, res) => {
-    const { id } = req.params;
-    const { profilePicture, email, username, userType, escola } = req.body; 
+  const userId = req.params.id;
+  const { nome, email } = req.body; // Campos que você deseja atualizar
 
-    try {
-        const updatedUser = await User.findByIdAndUpdate(id, {
-            profilePicture,
-            email,
-            username,
-            userType,
-            escola
-        }, { new: true }); 
-
-        if (!updatedUser) {
-            return res.status(404).send({ message: 'Usuário não encontrado' });
-        }
-        res.status(200).send(updatedUser);
-    } catch (error) {
-        res.status(500).send({ message: 'Erro ao atualizar usuário', error });
-    }
+  try {
+      const updatedUser = await User.findByIdAndUpdate(userId, { nome, email }, { new: true });
+      if (!updatedUser) return res.status(404).json({ message: "Usuário não encontrado" });
+      res.status(200).json(updatedUser);
+  } catch (error) {
+      res.status(500).json({ message: "Erro ao atualizar usuário", error });
+  }
 };
 
 

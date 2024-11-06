@@ -6,19 +6,23 @@ require('dotenv').config();
 
 const register = async (req, res) => {
     try {
-        const { username, email, password, userType, escola, profilePicture } = req.body;
 
-        
+        const { username, email, password, userType, escola } = req.body;
+        console.log(username, email, password, userType, escola);
+        const profilePicture = req.file ? req.file.path : null; // Valida se `req.file` existe
+
         if (!username || !email || !password || !userType || !escola) {
             return res.status(400).json({ message: "Todos os campos são obrigatórios" });
         }
 
-        
+        console.log("Imagem recebida:", profilePicture); // Para verificar o caminho
+
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "Email já registrado" });
         }
 
+        console.log(username, email, password, userType, escola);
         const newUser = new User({
             username,
             email,
@@ -32,10 +36,9 @@ const register = async (req, res) => {
         res.status(201).json({ message: "Usuário registrado com sucesso" });
     } catch (error) {
         console.error("Erro ao registrar o usuário:", error);
-        res.status(500).json({ message: "Erro ao registrar o usuário" });
+        res.status(500).json({ message: "Erro ao registrar o usuário", error: error.toString() });
     }
 };
-
 
 
 const login = async (req, res) => {
