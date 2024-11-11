@@ -1,5 +1,11 @@
 const mongoose = require('mongoose');
 
+// Função para gerar código único
+function generateUniqueCode() {
+    return new mongoose.Types.ObjectId().toString().slice(-6); 
+}
+
+// Definição do Schema da Turma
 const turmaSchema = new mongoose.Schema({
     nome: {
         type: String,
@@ -9,7 +15,7 @@ const turmaSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    professor: {
+    professorId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
@@ -18,14 +24,20 @@ const turmaSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }],
-    background: {
+    codigo: {
         type: String,
-        default: null,
+        unique: true,
+        default: generateUniqueCode,
     },
+    background: {  // Novo campo para armazenar o background selecionado
+        type: String,
+    }
 }, {
     timestamps: true,
 });
 
+
+// Definindo o modelo para a collection 'turmas'
 const Turma = mongoose.model('Turma', turmaSchema);
 
 module.exports = Turma;

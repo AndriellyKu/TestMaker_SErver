@@ -19,7 +19,7 @@ const getUser = async (req, res) => {
 const getProfessorData = async (req, res) => {
   try {
     const professorId = req.user.id; 
-    console.log("Professor ID:", professorId); 
+    console.log("Professor ID:", professorId); //Tirar log
 
     const professor = await User.findById(professorId, 'username profilePicture');
     if (!professor) {
@@ -27,12 +27,14 @@ const getProfessorData = async (req, res) => {
       return res.status(404).json({ message: 'Professor não encontrado' });
     }
 
-    res.json({ name: professor.username, profilePic: professor.profilePicture });
+    // Adiciona o _id à resposta JSON
+    res.json({ id: professor._id, name: professor.username, profilePic: professor.profilePicture });
   } catch (error) {
     console.error("Erro ao buscar dados do professor:", error);
     res.status(500).json({ message: 'Erro ao buscar dados do professor', error });
   }
 };
+
 
 const updateUser = async (req, res) => {
   const userId = req.params.id;

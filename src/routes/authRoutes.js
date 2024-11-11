@@ -26,7 +26,7 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 
 
-router.post('/register', upload.single('pr\ofilePicture'), register);
+router.post('/register', upload.single('profilePicture'), register);
 
 router.post('/login', login);
 
