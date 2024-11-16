@@ -2,7 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const authRoutes = require('./src/routes/authRoutes');
 const userRoutes = require('./src/routes/userRoutes');
-const turmaRoutes = require('./src/routes/turmaRoutes'); // Importa as rotas da turma
+const turmaRouter = require('./src/routes/turmaRoutes'); // Importa as rotas da turma
+const alunoRouter = require('./src/routes/alunoRouter');
+const provaRoutes = require('./src/routes/provaRoutes'); // Certifique-se de que está corretamente importado
 const cors = require('cors');
 require('dotenv').config();
 
@@ -24,7 +26,9 @@ mongoose.connect(process.env.MONGO_URI)
 // Definindo as rotas
 app.use('/auth', authRoutes);
 app.use('/users', userRoutes);
-app.use('/turmas', turmaRoutes); // Adiciona as rotas da turma aqui
+app.use('/turmas', turmaRouter);
+app.use('/alunos', alunoRouter);
+app.use('/provas', provaRoutes); // Corrigida a vírgula aqui
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

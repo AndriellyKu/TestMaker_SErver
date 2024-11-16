@@ -30,7 +30,11 @@ const userSchema = new mongoose.Schema({
     profilePicture: {
         type: String,
         default: null 
-    }
+    },
+    turmas: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Turma'
+    }]
 });
 
 userSchema.pre('save', async function (next) {

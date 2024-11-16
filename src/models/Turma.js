@@ -7,35 +7,30 @@ function generateUniqueCode() {
 
 // Definição do Schema da Turma
 const turmaSchema = new mongoose.Schema({
-    nome: {
+    nome: {  // Nome da turma
         type: String,
         required: true,
     },
-    turma: {
+    codigo: {  // Código único da turma
         type: String,
-        required: true,
+        unique: true,
+        default: generateUniqueCode,  // Gera um código único para cada turma
     },
-    professorId: {
+    professorId: {  // Referência para o professor
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
     },
-    alunos: [{
+    alunos: [{  // Alunos matriculados na turma
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
     }],
-    codigo: {
-        type: String,
-        unique: true,
-        default: generateUniqueCode,
-    },
     background: {  // Novo campo para armazenar o background selecionado
         type: String,
     }
 }, {
     timestamps: true,
 });
-
 
 // Definindo o modelo para a collection 'turmas'
 const Turma = mongoose.model('Turma', turmaSchema);
