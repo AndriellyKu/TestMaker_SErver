@@ -1,12 +1,10 @@
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs'); // Alterado para bcryptjs
 const jwt = require('jsonwebtoken');
 const User = require('../models/User.js'); 
 require('dotenv').config();
 
-
 const register = async (req, res) => {
     try {
-
         const { username, email, password, userType, escola } = req.body;
         console.log(username, email, password, userType, escola);
         const profilePicture = req.file ? req.file.path : null; // Valida se `req.file` existe
@@ -23,10 +21,15 @@ const register = async (req, res) => {
         }
 
         console.log(username, email, password, userType, escola);
+
+        // Hashear a senha antes de salvar o usuário
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         const newUser = new User({
             username,
             email,
-            password, 
+            password: hashedPassword, // Salva a senha hasheada
             userType,
             escola,
             profilePicture
@@ -40,32 +43,32 @@ const register = async (req, res) => {
     }
 };
 
-
 const login = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
-        
+        // Comparar a senha fornecida com a hasheada no banco
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(400).json({ message: 'Senha incorreta' });
         }
 
-        
-        const token = jwt.sign({ id: user._id, userType: user.userType }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        // Gerar o token JWT
+        const token = jwt.sign(
+            { id: user._id, userType: user.userType },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+        );
 
-        
         return res.json({ token, userType: user.userType });
     } catch (error) {
         return res.status(500).json({ message: 'Erro ao realizar login', error });
     }
 };
-
 
 module.exports = { register, login };
