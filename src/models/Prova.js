@@ -1,44 +1,51 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
-const provaSchema = new mongoose.Schema({
+const provaSchema = new mongoose.Schema(
+  {
     title: {
-        type: String,
-        required: true,
-        trim: true,
+      type: String,
+      required: true,
+      trim: true,
     },
     description: {
-        type: String,
-        required: false,
-        trim: true,
+      type: String,
+      trim: true,
     },
     professorId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User', // Referência ao modelo de usuário (professor)
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
     },
     turmaId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Turma', // Referência ao modelo de turma
-        required: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Turma",
+      required: true,
     },
     perguntas: [
-        {
-            pergunta: {
-                type: String,
-                required: true, // Texto da pergunta
-            },
-            resposta: {
-                type: String,
-                required: true, // Resposta da pergunta gerada pela IA
-            }
-        }
+      {
+        pergunta: {
+          type: String,
+          required: true,
+        },
+        resposta: {
+          type: String,
+          required: true,
+        },
+      },
     ],
-    data: {
-        type: Date,
-        default: Date.now,
+    status: {
+      type: String,
+      enum: ["rascunho", "finalizado"],
+      default: "rascunho",
     },
-});
+    data: {
+      type: Date,
+      default: Date.now,
+    },
+  },
+  {
+    timestamps: true, // Inclui `createdAt` e `updatedAt` automaticamente
+  }
+);
 
-const Prova = mongoose.model('Prova', provaSchema);
-
-module.exports = Prova;
+module.exports = mongoose.model("Prova", provaSchema);

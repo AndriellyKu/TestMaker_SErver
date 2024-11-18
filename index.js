@@ -13,7 +13,7 @@ const app = express();
 // Configuração do middleware
 app.use(express.json({ limit: '10mb' }));
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://test-maker-front-liard.vercel.app',
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true 
 }));
