@@ -1,4 +1,4 @@
-const bcrypt = require('bcryptjs'); // Alterado para bcryptjs
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User.js'); 
 require('dotenv').config();
@@ -7,41 +7,37 @@ const register = async (req, res) => {
     try {
         const { username, email, password, userType, escola } = req.body;
         console.log(username, email, password, userType, escola);
-        const profilePicture = req.file ? req.file.path : null; // Valida se `req.file` existe
+        const profilePicture = req.file ? req.file.path : null; 
 
         if (!username || !email || !password || !userType || !escola) {
             return res.status(400).json({ message: "Todos os campos são obrigatórios" });
         }
 
-        console.log("Imagem recebida:", profilePicture); // Para verificar o caminho
+        console.log("Imagem recebida:", profilePicture);
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
             return res.status(400).json({ message: "Email já registrado" });
         }
 
-        console.log(username, email, password, userType, escola);
-
-        // Hashear a senha antes de salvar o usuário
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
 
         const newUser = new User({
             username,
             email,
-            password: hashedPassword, // Salva a senha hasheada
+            password,
             userType,
             escola,
             profilePicture
         });
 
-        await newUser.save();
+        await newUser.save(); // O middleware `pre('save')` será acionado aqui
         res.status(201).json({ message: "Usuário registrado com sucesso" });
     } catch (error) {
         console.error("Erro ao registrar o usuário:", error);
         res.status(500).json({ message: "Erro ao registrar o usuário", error: error.toString() });
     }
 };
+
 
 const login = async (req, res) => {
     const { email, password } = req.body;
@@ -52,17 +48,13 @@ const login = async (req, res) => {
             return res.status(400).json({ message: 'Usuário não encontrado' });
         }
 
-        // Comparar a senha fornecida com a hasheada no banco
-        const validPassword = await bcrypt.compare(password, user.password);
-        console.log("Senha fornecida:", password); // Log da senha fornecida
-        console.log("Senha no banco:", user.password); // Log da senha hasheada no banco
         
+        const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
             return res.status(400).json({ message: 'Senha incorreta' });
         }
-        
 
-        // Gerar o token JWT
+        
         const token = jwt.sign(
             { id: user._id, userType: user.userType },
             process.env.JWT_SECRET,
