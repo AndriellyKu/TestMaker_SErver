@@ -54,15 +54,19 @@ const login = async (req, res) => {
 
         // Comparar a senha fornecida com a hasheada no banco
         const validPassword = await bcrypt.compare(password, user.password);
+        console.log("Senha fornecida:", password); // Log da senha fornecida
+        console.log("Senha no banco:", user.password); // Log da senha hasheada no banco
+        
         if (!validPassword) {
             return res.status(400).json({ message: 'Senha incorreta' });
         }
+        
 
         // Gerar o token JWT
         const token = jwt.sign(
             { id: user._id, userType: user.userType },
             process.env.JWT_SECRET,
-            { expiresIn: '1h' }
+            { expiresIn: '5h' }
         );
 
         return res.json({ token, userType: user.userType });
