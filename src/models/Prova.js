@@ -23,16 +23,17 @@ const provaSchema = new mongoose.Schema(
     },
     perguntas: [
       {
-        pergunta: {
+        pergunta: { type: String, required: true },
+        resposta: { type: mongoose.Schema.Types.Mixed, required: true },
+        tipo: {
           type: String,
+          enum: ["multiple-choice", "short-answer", "paragraph", "checkbox"],
           required: true,
         },
-        resposta: {
-          type: String,
-          required: true,
-        },
+        categoria: { type: String, trim: true }, // Opcional
       },
     ],
+    
     status: {
       type: String,
       enum: ["rascunho", "finalizado"],

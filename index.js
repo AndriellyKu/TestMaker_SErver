@@ -12,7 +12,6 @@ const app = express();
 
 
 const allowedOrigins = [
-  'https://test-maker-front-liard.vercel.app',
   'http://localhost:5173'
 ];
 
