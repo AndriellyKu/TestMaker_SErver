@@ -143,21 +143,17 @@ const atualizarPerguntasDaProva = async (req, res) => {
     return res.status(401).json({ error: "Usuário não autenticado." });
   }
 
-  const professorId = user.id;
-  const {
-    provaId,
-    prompt,
-    link,
-    pdf,
-    questionCount = 5,
-    questionTypes = ["Múltipla escolha"],
-    title,
-    description,
-  } = req.body;
+  const professorId = user.id; // Aqui o professorId vem da requisição
+  const { provaId, prompt, link, pdf, questionCount = 5, questionTypes = ["Múltipla escolha"], title, description } = req.body;
 
-  try {
-    // Verifica se a prova pertence ao professor
-    const provaExistente = await Prova.findOne({ _id: provaId, professorId });
+  // Converte o professorId (e qualquer outro id) para ObjectId
+  const professorObjectId = mongoose.Types.ObjectId(professorId);
+
+  // Converte o provaId para ObjectId também
+  const provaObjectId = mongoose.Types.ObjectId(provaId);
+try {
+    // Verifica se a prova pertence ao professor, usando o ObjectId
+    const provaExistente = await Prova.findOne({ _id: provaObjectId, professorId: professorObjectId });
     if (!provaExistente) {
       return res.status(404).json({
         error: "Prova não encontrada ou você não tem permissão para alterá-la.",
@@ -194,6 +190,7 @@ const atualizarPerguntasDaProva = async (req, res) => {
     res.status(500).json({ error: error.message || "Erro ao atualizar a prova." });
   }
 };
+
 
 module.exports = {
   atualizarPerguntasDaProva,
