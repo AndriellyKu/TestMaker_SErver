@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const { listarProvasDoProfessor, excluirProva, criarProva, getProvaById } = require('../controllers/SalaController');
+const { getProvaById } = require('../controllers/provaController');
+const { listarProvasDoProfessor, excluirProva, criarProva } = require('../controllers/SalaController');
 const { gerarQuestoes } = require('../controllers/openAIController');
 const { gerarPerguntasComPrompt, gerarPerguntasComLink, gerarPerguntasComPDF, atualizarPerguntasDaProva } = require('../controllers/openAIController');
 const authMiddleware = require('../middleware/authenticateToken');
