@@ -16,6 +16,6 @@ router.delete('/excluir-prova/:id', excluirProva);
 router.get("/:id", getProvaById);
 
 // Defina a rota PUT para atualizar as perguntas da prova
-router.put('/atualizar-prova', authMiddleware, atualizarPerguntasDaProva);
+router.put('/atualizar-prova', atualizarPerguntasDaProva);
 
 module.exports = router;
