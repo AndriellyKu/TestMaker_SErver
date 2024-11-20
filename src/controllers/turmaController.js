@@ -1,4 +1,5 @@
 const Turma = require('../models/Turma'); // Importe o modelo Turma
+const Prova = require('../models/Prova');
 
 // Função para criar uma nova turma
 const criarTurma = async (req, res) => {
@@ -46,6 +47,7 @@ const listarTurmasDoProfessor = async (req, res) => {
     }
 };
 
+
 // Função para deletar uma turma específica criada pelo professor autenticado
 const deletarTurma = async (req, res) => {
     try {
@@ -92,10 +94,28 @@ const listarAlunosDaTurma = async (req, res) => {
     }
 };
 
+const listarProvasDaTurma = async (req, res) => {
+    try {
+        const turmaId = req.params.id; // Obtém o ID da turma da URL
+
+        // Busca todas as provas associadas à turma
+        const provas = await Prova.find({ turmaId });
+
+        if (!provas.length) {
+            return res.status(404).json({ message: 'Nenhuma prova encontrada para esta turma.' });
+        }
+
+        return res.status(200).json(provas);
+    } catch (error) {
+        console.error('Erro ao listar provas:', error);
+        return res.status(500).json({ message: 'Erro ao listar provas.' });
+    }
+};
 
 
 // Exportação das funções para uso em rotas
 module.exports = {
+    listarProvasDaTurma,
     criarTurma,
     listarTurmasDoProfessor,
     deletarTurma,

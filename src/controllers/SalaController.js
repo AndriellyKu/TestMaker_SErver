@@ -1,17 +1,23 @@
 const Prova = require('../models/Prova');
 
+async function listarProvasDaTurma(req, res) {
+  try {
+    const turmaId = req.params.turmaId;
 
-// Função para listar provas criadas pelo professor
-const listarProvasDoProfessor = async (req, res) => {
-    const professorId = req.user._id; // Assumindo que `req.user` contém o `professorId`
-    
-    try {
-        const provas = await Prova.find({ professorId }).populate('turmaId', 'nome');
-        res.status(200).json(provas);
-    } catch (error) {
-        res.status(500).json({ error: 'Erro ao buscar provas do professor: ' + error.message });
+    // Buscar as provas associadas à turma
+    const provas = await Prova.find({ turmaId: turmaId }).populate('turmaId'); // Populando a referência da turma, se necessário.
+
+    if (!provas) {
+      return res.status(404).json({ message: 'Nenhuma prova encontrada para esta turma.' });
     }
-};
+
+    return res.status(200).json(provas);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Erro ao buscar provas da turma.' });
+  }
+}
+
 
 const excluirProva = async (req, res) => {
     const { id } = req.params; 
@@ -57,5 +63,5 @@ const criarProva = async (req, res) => {
 
 
 module.exports = { 
-    listarProvasDoProfessor, excluirProva, criarProva 
+    listarProvasDaTurma, excluirProva, criarProva 
 };

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { listarProvasDoProfessor, excluirProva, criarProva } = require('../controllers/SalaController');
+const { listarProvasDaTurma, excluirProva, criarProva } = require('../controllers/SalaController');
 const { gerarQuestoes } = require('../controllers/openAIController');
 const { gerarPerguntasComPrompt, gerarPerguntasComLink, gerarPerguntasComPDF, atualizarPerguntasDaProva } = require('../controllers/openAIController');
 const authMiddleware = require('../middleware/authenticateToken');
 
-router.get('/professor/provas', listarProvasDoProfessor);
+router.get('/:turmaId/provas', listarProvasDaTurma);
 
 router.post('/criar-prova', authMiddleware, criarProva);
 
