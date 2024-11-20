@@ -34,7 +34,7 @@ const atualizarPerguntasDaProva = async (req, res) => {
     provaExistente.perguntas = perguntasGeradas;
     if (title) provaExistente.title = title;
     if (description) provaExistente.description = description;
-
+    
     await provaExistente.save();
 
     res.status(200).json(provaExistente);
@@ -44,26 +44,6 @@ const atualizarPerguntasDaProva = async (req, res) => {
   }
 };
 
-// Controlador para buscar uma prova pelo ID
-const getProvaById = async (req, res) => {
-try {
-    const { id } = req.params; // Pega o ID da URL
-    const prova = await Prova.findById(id)
-      .populate("professorId", "name") // Popula informações do professor, se necessário
-      .populate("turmaId", "nome"); // Popula informações da turma, se necessário
-
-    if (!prova) {
-      return res.status(404).json({ error: "Prova não encontrada" });
-    }
-
-    res.status(200).json(prova);
-  } catch (error) {
-    console.error("Erro ao buscar prova:", error);
-    res.status(500).json({ error: "Erro ao buscar prova" });
-  }
-};
-
 module.exports = {
-  getProvaById,
   atualizarPerguntasDaProva,
 };

@@ -117,7 +117,7 @@ const atualizarPerguntasDaProva = async (req, res) => {
 
   const professorId = user.id;
   console.log(professorId)
-
+  console.log
   const {
     provaId,
     prompt,
@@ -128,7 +128,7 @@ const atualizarPerguntasDaProva = async (req, res) => {
     title,
     description,
   } = req.body;
-  console.log(provaId)
+
   try {
     // Verifica se a prova pertence ao professor
     const provaExistente = await Prova.findOne({ _id: provaId, professorId });
