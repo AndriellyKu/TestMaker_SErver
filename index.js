@@ -12,8 +12,8 @@ const app = express();
 
 
 const allowedOrigins = [
-  'http://localhost:5173', // Seu domínio local
-  'https://test-maker-front-liard.vercel.app' // Domínio do seu projeto no Vercel
+  'http://localhost:5173',
+  'https://test-maker-front-liard.vercel.app'
 ];
 
 app.use(cors({
