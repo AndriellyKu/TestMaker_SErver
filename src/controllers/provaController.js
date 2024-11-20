@@ -34,7 +34,7 @@ const atualizarPerguntasDaProva = async (req, res) => {
     provaExistente.perguntas = perguntasGeradas;
     if (title) provaExistente.title = title;
     if (description) provaExistente.description = description;
-    
+
     await provaExistente.save();
 
     res.status(200).json(provaExistente);
@@ -44,11 +44,9 @@ const atualizarPerguntasDaProva = async (req, res) => {
   }
 };
 
-const Prova = require("../models/Prova");
-
 // Controlador para buscar uma prova pelo ID
 const getProvaById = async (req, res) => {
-  try {
+try {
     const { id } = req.params; // Pega o ID da URL
     const prova = await Prova.findById(id)
       .populate("professorId", "name") // Popula informações do professor, se necessário
@@ -65,7 +63,7 @@ const getProvaById = async (req, res) => {
   }
 };
 
-
 module.exports = {
-    getProvaById, atualizarPerguntasDaProva,
+  getProvaById,
+  atualizarPerguntasDaProva,
 };
