@@ -4,8 +4,11 @@ const { listarProvasDaTurma, excluirProva, criarProva } = require('../controller
 const { gerarQuestoes } = require('../controllers/openAIController');
 const { gerarPerguntasComPrompt, gerarPerguntasComLink, gerarPerguntasComPDF, atualizarPerguntasDaProva } = require('../controllers/openAIController');
 const authMiddleware = require('../middleware/authenticateToken');
+const {puxarprova} = require('../controllers/turmaController');
 
 router.get('/:turmaId/provas', listarProvasDaTurma);
+
+router.get('/:id', puxarprova);
 
 router.post('/criar-prova', authMiddleware, criarProva);
 
