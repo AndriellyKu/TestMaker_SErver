@@ -68,16 +68,19 @@ const mudarAcessoProva = async (req, res) => {
     const professorId = req.user.id;
     const provaId = req.params.id;
     const liberada = req.body.liberada
-    
     try {
-        if(typeof liberada != 'boolean') return res.status(400).send("Erro ao ler 'liberada' (deve ser do tipo boolean)")
-        const prova = await Prova.findOneAndUpdate({ _id: provaId, professorId }, {
-            $set: { liberada }
+        if(typeof liberada != 'boolean') 
+            return res.status(400).send("Erro ao ler 'liberada' (deve ser do tipo boolean)")
+        const prova = await Prova.findOne({_id: provaId, professorId})
+        if(!prova) return res.status(404).send("Prova não encontrada");
+        const updatedProva = await Prova.updateOne({ _id: provaId, professorId}, {
+            $set: {
+                liberada
+            },
         });
-        if(!prova) return res.status(404).send("Prova não encontrada"); 
-        res.status(200).json(prova);
+        res.status(200).json(updatedProva);
     } catch (error) {
-        res.status(500).json({ error: 'Erro ao criar a prova: ' + error.message });
+        res.status(500).json({ error: 'Erro ao liberar a prova: ' + error.message });
     }
 };
 
