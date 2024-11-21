@@ -112,9 +112,27 @@ const listarProvasDaTurma = async (req, res) => {
     }
 };
 
+const puxarprova = async (req, res) => {
+    try {
+        const provaId = req.params.id;
+
+        const prova = await Prova.findById(provaId)
+
+        
+        if (!prova) {
+            return res.status(404).json({ message: 'Não tem' });
+        }
+
+        return res.status(200).json(prova);
+    } catch (error) {
+        console.error('Erro ao listar provas:', error);
+        return res.status(500).json({ message: 'Erro ao listar provas.' });
+    }
+}
 
 // Exportação das funções para uso em rotas
 module.exports = {
+    puxarprova,
     listarProvasDaTurma,
     criarTurma,
     listarTurmasDoProfessor,

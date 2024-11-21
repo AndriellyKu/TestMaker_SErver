@@ -33,11 +33,9 @@ const provaSchema = new mongoose.Schema(
         categoria: { type: String, trim: true }, // Opcional
       },
     ],
-    
-    status: {
-      type: String,
-      enum: ["rascunho", "finalizado"],
-      default: "rascunho",
+    liberada: {
+      type: Boolean,
+      default: false, // Prova começa como "não liberada"
     },
     data: {
       type: Date,

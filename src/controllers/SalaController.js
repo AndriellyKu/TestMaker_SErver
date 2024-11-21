@@ -52,6 +52,8 @@ const criarProva = async (req, res) => {
             professorId,
             turmaId,
         });
+        
+        console.log(novaProva._id)
 
         res.status(201).json(novaProva);
     } catch (error) {
