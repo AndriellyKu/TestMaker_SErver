@@ -12,7 +12,7 @@ router.get('/minhas-turmas', authenticateToken, verificarProfessor, listarTurmas
 
 router.delete('/deletar-turma/:id', authenticateToken, verificarProfessor, deletarTurma);
 
-router.get('/turmas/:id/provas', listarProvasDaTurma);
+router.get('/:id/provas', listarProvasDaTurma);
 
 router.get('/:id/alunos', listarAlunosDaTurma);
 
